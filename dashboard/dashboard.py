@@ -29,14 +29,72 @@ all_df = load_data()
 
 # Pastikan data berhasil dimuat sebelum lanjut
 if all_df is not None:
-    # --- SIDEBAR ---
+    # --- SIDEBAR - FILTER INTERAKTIF ---
     with st.sidebar:
         st.image("https://github.com/dicodingacademy/assets/raw/main/logo.png")
         st.title("Zayyana Maulida")
         st.write("Proyek Analisis Data E-Commerce")
+        
+        st.divider()
+        st.subheader("🔍 Filter Data")
+        
+        # Filter Tanggal
+        st.write("**Pilih Rentang Tanggal Pembelian:**")
+        col1, col2 = st.columns(2)
+        with col1:
+            start_date = st.date_input(
+                "Tanggal Mulai",
+                value=all_df["order_purchase_timestamp"].min().date(),
+                min_value=all_df["order_purchase_timestamp"].min().date(),
+                max_value=all_df["order_purchase_timestamp"].max().date(),
+                key="start_date"
+            )
+        with col2:
+            end_date = st.date_input(
+                "Tanggal Akhir",
+                value=all_df["order_purchase_timestamp"].max().date(),
+                min_value=all_df["order_purchase_timestamp"].min().date(),
+                max_value=all_df["order_purchase_timestamp"].max().date(),
+                key="end_date"
+            )
+        
+        # Filter Kategori Produk
+        category_col = "product_category_name_english" if "product_category_name_english" in all_df.columns else "product_category_name"
+        all_categories = sorted(all_df[category_col].unique())
+        selected_categories = st.multiselect(
+            "Pilih Kategori Produk:",
+            options=all_categories,
+            default=all_categories,
+            key="categories"
+        )
+        
+        # Filter Wilayah (State)
+        all_states = sorted(all_df["customer_state"].unique())
+        selected_states = st.multiselect(
+            "Pilih Wilayah (State):",
+            options=all_states,
+            default=all_states,
+            key="states"
+        )
+        
+        st.divider()
+        st.caption("Filter akan diterapkan ke semua visualisasi di bawah")
 
     # --- HEADER ---
     st.header('E-Commerce Data Analysis Dashboard 📊')
+    
+    # --- APLIKASIKAN FILTER KE DATA ---
+    filtered_df = all_df[
+        (all_df["order_purchase_timestamp"].dt.date >= start_date) &
+        (all_df["order_purchase_timestamp"].dt.date <= end_date) &
+        (all_df[category_col].isin(selected_categories)) &
+        (all_df["customer_state"].isin(selected_states))
+    ].copy()
+    
+    # Tampilkan informasi filter
+    st.info(f"📊 Data ditampilkan: {len(filtered_df):,} transaksi dari {len(all_df):,} total transaksi | "
+            f"Periode: {start_date} s/d {end_date} | "
+            f"Kategori: {len(selected_categories)} | Wilayah: {len(selected_states)}")
 
     # --- BAGIAN 1: PERFORMA PRODUK ---
     st.subheader("Best & Worst Performing Product")
