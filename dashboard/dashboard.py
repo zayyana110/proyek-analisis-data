@@ -19,15 +19,20 @@ st.markdown("""
 @st.cache_data
 def load_data():
     file_path = "dashboard/main_data.csv" if os.path.exists("dashboard/main_data.csv") else "main_data.csv"
-    if not os.path.exists(file_path):
-        st.error("File data 'main_data.csv' tidak ditemukan!")
-        return None
     
-    df = pd.read_csv(file_path)
-    datetime_cols = ["order_purchase_timestamp", "order_delivered_customer_date"]
+    df = pd.read_csv(file_path, sep=None, engine='python', skipinitialspace=True)
+    
+    df.columns = df.columns.str.strip()
+    
+    datetime_cols = [
+        "order_purchase_timestamp", 
+        "order_delivered_customer_date"
+    ]
+    
     for col in datetime_cols:
         if col in df.columns:
-            df[col] = pd.to_datetime(df[col])
+            df[col] = pd.to_datetime(df[col], errors='coerce')
+            
     return df
 
 all_df = load_data()
