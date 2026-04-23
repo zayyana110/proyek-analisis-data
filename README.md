@@ -1,21 +1,54 @@
-# E-Commerce Data Analysis Dashboard 📊
+# 📊 E-Commerce Data Analysis Dashboard
 
-## Deskripsi
-Proyek ini merupakan analisis data dari **E-Commerce Public Dataset**. Tujuan dari proyek ini adalah untuk melakukan data wrangling, exploratory data analysis (EDA), dan visualisasi data untuk mendapatkan insight mengenai performa penjualan, kategori produk, serta profil pelanggan melalui analisis RFM.
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
 
-## Struktur Direktori
-- **/data**: Berisi dataset mentah dalam format CSV.
-- **/dashboard**: Berisi file utama untuk dashboard Streamlit (`dashboard.py`) dan dataset yang telah dibersihkan (`main_data.csv`).
-- **notebook.ipynb**: File Jupyter Notebook yang berisi proses analisis data lengkap dari awal hingga akhir.
-- **requirements.txt**: Daftar library Python yang dibutuhkan untuk menjalankan proyek.
+## 📌 Deskripsi Proyek
+Proyek ini merupakan hasil analisis data dari **E-Commerce Public Dataset**. Fokus utama dari proyek ini adalah untuk melakukan proses *Data Wrangling*, *Exploratory Data Analysis (EDA)*, serta *Explanatory Analysis* guna mendapatkan wawasan (*insight*) mendalam mengenai:
+- Performa penjualan kategori produk (Best & Worst Performing Products).
+- Tren pendapatan bulanan perusahaan.
+- Profil dan segmentasi pelanggan melalui **Analisis RFM (Recency, Frequency, & Monetary)**.
 
-## Link Dashboard (Streamlit Cloud)
+## 🗂️ Struktur Direktori
+```bash
+proyek-analisis-data/
+├── data/
+│   ├── (Seluruh dataset mentah dalam format .csv)
+├── dashboard/
+│   ├── dashboard.py
+│   └── main_data.csv
+├── notebook.ipynb
+├── README.md
+├── requirements.txt
+└── url.txt
+
+🌐 Link Dashboard (Streamlit Cloud)
 Anda dapat mengakses dashboard interaktif secara langsung melalui tautan berikut:
-👉 **[E-Commerce Analysis Dashboard](https://zayyana-ecommerce.streamlit.app/)**
+👉 E-Commerce Analysis Dashboard
 
-## Instalasi & Cara Menjalankan Secara Lokal
-Jika Anda ingin menjalankan proyek ini di komputer lokal, ikuti langkah-langkah berikut:
+🚀 Panduan Menjalankan Secara Lokal
+1. Clone Repositori
+Langkah pertama, unduh proyek ini ke komputer lokal Anda menggunakan perintah berikut:
+Bash
+git clone [https://github.com/zayyana110/proyek-analisis-data.git](https://github.com/zayyana110/proyek-analisis-data.git)
+cd proyek-analisis-data
 
-1. **Clone Repository ini** (atau unduh file ZIP):
-   ```bash
-   git clone [https://github.com/zayyana110/proyek-analisis-data.git](https://github.com/zayyana110/proyek-analisis-data.git)
+2. Instalasi Library
+Pastikan Anda memiliki Python (versi 3.9 atau lebih baru). Instal semua dependensi yang dibutuhkan menggunakan pip:
+Bash
+pip install -r requirements.txt
+Atau jika perintah pip tidak ditemukan:
+Bash
+python -m pip install -r requirements.txt
+
+3. Menjalankan Dashboard
+Jalankan perintah berikut pada terminal di dalam direktori utama proyek:
+Bash
+streamlit run dashboard/dashboard.py
+Aplikasi akan secara otomatis terbuka di browser default Anda.
+
+📬 Kontak
+Nama: Zayyana Maulida
+Email: zayyanamaulida1@gmail.com
+ID Dicoding: CDCC466D6X1381
