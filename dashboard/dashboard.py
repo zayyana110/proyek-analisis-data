@@ -21,34 +21,51 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- FUNGSI LOAD DATA ---
 @st.cache_data
 def load_data():
+    # Tentukan path file
     file_path = "dashboard/main_data.csv" if os.path.exists("dashboard/main_data.csv") else "main_data.csv"
     
     if not os.path.exists(file_path):
+        st.error(f"File {file_path} tidak ditemukan!")
         return None
 
-    try:
-        # sep=None dengan engine=python mendeteksi delimiter secara otomatis
-        df = pd.read_csv(file_path, sep=None, engine='python')
-        df.columns = df.columns.str.strip()
-        
-        # Konversi datetime
-        datetime_cols = ["order_purchase_timestamp", "order_delivered_customer_date"]
-        for col in datetime_cols:
-            if col in df.columns:
-                df[col] = pd.to_datetime(df[col], errors='coerce')
-        
-        return df
-    except Exception as e:
-        st.error(f"Gagal memuat data: {e}")
-        return None
+    # Gunakan encoding='utf-8' atau 'latin1' untuk menghindari karakter aneh
+    df = pd.read_csv(file_path, encoding='utf-8')
+    
+    # --- LANGKAH KRUSIAL: MEMBERSIHKAN NAMA KOLOM ---
+    # Terkadang ada karakter tersembunyi (BOM) di awal file CSV
+    df.columns = df.columns.str.strip().str.replace('"', '').str.replace("'", "")
+    
+    # Konversi ke datetime dengan penanganan error
+    if "order_purchase_timestamp" in df.columns:
+        df["order_purchase_timestamp"] = pd.to_datetime(df["order_purchase_timestamp"], errors='coerce')
+    else:
+        # Jika masih error, kita tampilkan list kolom yang terbaca agar tahu masalahnya
+        st.error("Kolom 'order_purchase_timestamp' tetap tidak ditemukan!")
+        st.write("Kolom yang tersedia di file kamu:", df.columns.tolist())
+        st.stop()
 
-# --- INITIALIZE SESSION STATE ---
+    if "order_delivered_customer_date" in df.columns:
+        df["order_delivered_customer_date"] = pd.to_datetime(df["order_delivered_customer_date"], errors='coerce')
+            
+    return df
+
+# --- INISIALISASI HALAMAN ---
 if 'page' not in st.session_state:
     st.session_state.page = "📊 Visualisasi Data"
 
+all_df = load_data()
+
+# Pastikan df tidak None dan kolom tersedia sebelum lanjut ke filter sidebar
+if all_df is not None:
+    # Filter tanggal hanya jalan jika data tersedia
+    try:
+        min_date = all_df["order_purchase_timestamp"].min().date()
+        max_date = all_df["order_purchase_timestamp"].max().date()
+    except Exception as e:
+        st.error(f"Gagal mengambil rentang tanggal: {e}")
+        st.stop()
 # --- MAIN LOGIC ---
 all_df = load_data()
 
