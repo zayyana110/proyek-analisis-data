@@ -5,17 +5,17 @@ import os
 
 st.set_page_config(page_title="Zayyana E-Commerce Dashboard", layout="wide")
 
-import os
-
 @st.cache_data
 def load_data():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-
     file_path = os.path.join(current_dir, "main_data.csv")
     
     if not os.path.exists(file_path):
-        st.error(f"File tidak ditemukan di: {file_path}")
-        return None
+        # Fallback jika file ada di root saat testing lokal
+        file_path = "main_data.csv"
+        if not os.path.exists(file_path):
+            st.error(f"File tidak ditemukan.")
+            return None
 
     df = pd.read_csv(file_path)
     df["order_purchase_timestamp"] = pd.to_datetime(df["order_purchase_timestamp"])
@@ -39,6 +39,7 @@ if len(date_range) == 2:
     filtered_df = all_df[(all_df["order_purchase_timestamp"].dt.date >= start_date) & 
                          (all_df["order_purchase_timestamp"].dt.date <= end_date)]
 else:
+    start_date, end_date = min_date, max_date
     filtered_df = all_df
 
 # --- HALAMAN VISUALISASI ---
@@ -46,7 +47,10 @@ if page == "Visualisasi Utama":
     st.title("Business Intelligence Dashboard 📊")
     
     # 1. Best & Worst Products
-    st.subheader("Performa Produk (2017-2018)")
+    st.subheader("Performa Produk")
+    # Menampilkan rentang waktu filter di bawah subheader
+    st.markdown(f"**Periode:** {start_date} s/d {end_date}")
+    
     prod_perf = filtered_df.groupby("product_category_name_english").order_id.count().sort_values(ascending=False).reset_index()
     
     col1, col2 = st.columns(2)
@@ -70,6 +74,9 @@ if page == "Visualisasi Utama":
 # --- HALAMAN RFM ---
 else:
     st.title("Customer Segmentation (RFM) 🔍")
+    # Menampilkan rentang waktu filter juga di halaman RFM agar konsisten
+    st.markdown(f"**Periode Analisis:** {start_date} s/d {end_date}")
+    
     recent_date = filtered_df["order_purchase_timestamp"].max()
     rfm_df = filtered_df.groupby("customer_unique_id").agg({
         "order_purchase_timestamp": lambda x: (recent_date - x.max()).days,
@@ -87,4 +94,5 @@ else:
     with c3:
         st.plotly_chart(px.bar(rfm_df.sort_values("monetary", ascending=False).head(5), x="short_id", y="monetary", title="Monetary"), use_container_width=True)
 
+st.divider()
 st.caption("Copyright © 2026 - Zayyana Maulida")
