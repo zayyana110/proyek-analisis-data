@@ -5,9 +5,19 @@ import os
 
 st.set_page_config(page_title="Zayyana E-Commerce Dashboard", layout="wide")
 
+import os
+
 @st.cache_data
 def load_data():
-    df = pd.read_csv("main_data.csv")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    file_path = os.path.join(current_dir, "main_data.csv")
+    
+    if not os.path.exists(file_path):
+        st.error(f"File tidak ditemukan di: {file_path}")
+        return None
+
+    df = pd.read_csv(file_path)
     df["order_purchase_timestamp"] = pd.to_datetime(df["order_purchase_timestamp"])
     return df
 
